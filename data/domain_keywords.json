@@ -1,0 +1,21 @@
+{
+    "tech": {
+        "name": "Công nghệ",
+        "keywords": ["điện thoại", "laptop", "máy tính", "app", "ứng dụng", "pin", "camera",
+                     "màn hình", "ram", "cpu", "chip", "sạc", "tai nghe", "loa", "wifi",
+                     "bluetooth", "android", "iphone", "samsung", "oppo", "xiaomi", "macbook",
+                     "windows", "phần mềm", "cập nhật", "lag", "giật", "đơ", "treo máy",
+                     "cấu hình", "bộ nhớ", "dung lượng", "tốc độ", "hiệu năng"],
+        "positive_words": ["mượt", "nhanh", "sắc nét", "bền", "mỏng", "nhẹ", "mạnh"],
+        "negative_words": ["lag", "giật", "đơ", "treo", "nóng", "chậm", "nặng", "lỗi"]
+    },
+    "fnb": {
+        "name": "Ẩm thực",
+        "keywords": ["đồ ăn", "món ăn", "nhà hàng", "quán", "phục vụ", "thức uống",
+                     "cà phê", "trà sữa", "bánh", "cơm", "phở", "bún", "mì",
+                     "giao hàng", "đóng gói", "menu", "giá", "khẩu phần", "gia vị",
+                     "nước chấm", "tráng miệng", "buffet", "order", "đặt bàn"],
+        "positive_words": ["ngon", "thơm", "tươi", "giòn", "béo", "đậm đà", "hấp dẫn"],
+        "negative_words": ["dở", "tanh", "ôi", "thiu", "nhạt", "mặn", "chua", "khô"]
+    }
+}

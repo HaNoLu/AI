@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân Tích Cảm Xúc Bình Luận - AI Sentiment Analysis</title>
+    <meta name="description" content="Hệ thống AI phân tích cảm xúc bình luận tiếng Việt: tích cực, tiêu cực, trung lập, hỗn hợp, không rõ.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR: Lịch sử -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Lịch sử</h2>
+                <button class="btn-clear" id="btn-clear-history" title="Xóa lịch sử">Xóa</button>
+            </div>
+            <div class="history-list" id="history-list">
+                <div class="history-empty">
+                    <p>Chưa có lịch sử tra cứu.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <button class="btn-toggle-sidebar" id="btn-toggle-sidebar">☰</button>
+                <div class="header-text">
+                    <h1>Phân Tích Cảm Xúc Bình Luận</h1>
+                    <p class="welcome-text">Chào mừng đến với hệ thống phân tích cảm xúc của bình luận!</p>
+                </div>
+            </header>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <label for="comment-input" class="input-label">Nhập bình luận mà bạn muốn phân tích:</label>
+                <div class="input-group">
+                    <textarea
+                        id="comment-input"
+                        placeholder="Bình luận gì?"
+                        rows="3"
+                        maxlength="1000"
+                    ></textarea>
+                    <div class="input-footer">
+                        <div class="domain-select">
+                            <label for="domain-select">Miền:</label>
+                            <select id="domain-select">
+                                <option value="auto">Tự động</option>
+                                {% for key, name in domains.items() %}
+                                <option value="{{ key }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="file-upload" style="margin-left: auto;">
+                            <input type="file" id="file-upload-input" accept=".csv, .xlsx, .xls" style="display:none;">
+                            <label for="file-upload-input" class="btn-upload" id="btn-upload-label" style="cursor: pointer; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--accent-primary); color: var(--accent-primary); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; transition: all 0.25s ease;">
+                                📁 Nhập File Excel/CSV
+                            </label>
+                        </div>
+                        <span class="char-count" id="char-count" style="margin-left: 10px;">0/1000</span>
+                        <button class="btn-analyze" id="btn-analyze">
+                            <span class="btn-text">Phân tích</span>
+                            <span class="btn-loading" style="display:none;">Đang xử lý...</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Section -->
+            <section class="result-section" id="result-section" style="display:none;">
+                <div class="result-card" id="result-card">
+                    <div class="result-header">
+                        <span class="result-icon" id="result-icon"></span>
+                        <span class="result-label" id="result-label"></span>
+                    </div>
+                    <div class="result-domain" id="result-domain"></div>
+                    <div class="result-comment" id="result-comment"></div>
+                    <div class="result-explanation" id="result-explanation"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

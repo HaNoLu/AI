@@ -1,0 +1,37 @@
+[
+    {
+        "pattern": "(t[oố]t l[aắ]m|hay l[aắ]m|gi[oỏ]i l[aắ]m|[dđ][eẹ]p l[aắ]m|ngon l[aắ]m).*(lu[oô]n|[aá]|nha|nh[eé]|[dđ][aấ]y|[dđ][oó])",
+        "explanation": "Cụm từ khen + từ nhấn mạnh cuối câu thường mang tính mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "(tuy[eệ]t v[oờ]i|xu[aấ]t s[aắ]c|ho[aà]n h[aả]o).*(th[aậ]t s[uự]|th[aậ]t|lu[oô]n|v[aã]i)",
+        "explanation": "Dùng từ khen quá mức kết hợp từ nhấn mạnh, có thể là mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "5 sao.*(cho|v[iì]|b[oở]i).*(ch[aậ]m|t[eệ]|x[aấ]u|d[oở]|h[oỏ]ng|lag|gi[aậ]t|l[oỗ]i)",
+        "explanation": "Cho 5 sao nhưng nội dung lại phàn nàn, đây là mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "(c[aả]m [oơ]n|c[aá]m [oơ]n).*(đ[aã] l[aà]m|đ[aã] cho|v[iì] đ[aã]).*(h[oỏ]ng|t[eệ]|x[aấ]u|ch[aậ]m|l[oỗ]i|m[aấ]t)",
+        "explanation": "Cảm ơn vì điều tiêu cực, đây là mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "(tot|t[oố]t).*(lam|l[aắ]m).*(luon|lu[oô]n).*(hong|h[oỏ]ng|hu|h[uư]|het|h[eế]t|chet|ch[eế]t|ho[aỏ]ng)",
+        "explanation": "Khen 'tốt lắm luôn' nhưng kèm hậu quả tiêu cực, mang tính mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "(nhanh th[aậ]t|nhanh that|nhanh gh[eê]|nhanh ghe).*(ch[oờ]|cho|đ[oợ]i|doi|m[aấ]t|mat).*(ti[eế]ng|tieng|ng[aà]y|ngay|tu[aầ]n|tuan|th[aá]ng|thang)",
+        "explanation": "Khen nhanh nhưng thực tế chờ rất lâu, đây là mỉa mai.",
+        "flip": true
+    },
+    {
+        "pattern": "(duoc|đ[uượ]c).*(dung|d[uù]ng).*(phut|ph[uú]t|giay|gi[aâ]y).*(hong|h[oỏ]ng|hu|h[uư]|chet|ch[eế]t|sap|s[aậ]p|tat|t[aắ]t)",
+        "explanation": "Sử dụng được thời gian rất ngắn rồi hỏng, mang tính tiêu cực/mỉa mai.",
+        "flip": true
+    }
+]
