@@ -1,15 +1,15 @@
-import os
+import os 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-MODELS_DIR = os.path.join(BASE_DIR, 'models')
+BASE_DIR =os .path .dirname (os .path .abspath (__file__ ))
+DATA_DIR =os .path .join (BASE_DIR ,'data')
+MODELS_DIR =os .path .join (BASE_DIR ,'models')
 
-DOMAINS = {
-    'general': 'Tổng quát',
-    'tech': 'Công nghệ',
-    'fnb': 'Ẩm thực'
+DOMAINS ={
+'general':'Tổng quát',
+'tech':'Công nghệ',
+'fnb':'Ẩm thực'
 }
-DEFAULT_DOMAIN = 'general'
+DEFAULT_DOMAIN ='general'
 
 TFIDF_MAX_FEATURES = 5000
 TFIDF_NGRAM_RANGE = (1, 3)
