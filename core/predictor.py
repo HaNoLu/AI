@@ -11,8 +11,6 @@ from core.preprocess import TextPreprocessor
 
 
 class SentimentPredictor:
-    # Class du doan cam xuc 5 nhan
-
     POSITIVE = "Tích cực"
     NEGATIVE = "Tiêu cực"
     NEUTRAL = "Trung lập"
@@ -29,11 +27,10 @@ class SentimentPredictor:
 
     def __init__(self):
         self.preprocessor = TextPreprocessor(config.DATA_DIR)
-        self.models = {}  # domain -> (model, vectorizer)
+        self.models = {}
         self._load_models()
 
     def _load_models(self):
-        # load model tu thu muc
         for domain in config.DOMAINS:
             model_path = os.path.join(config.MODELS_DIR, domain, 'sentiment_model.pkl')
             vec_path = os.path.join(config.MODELS_DIR, domain, 'tfidf_vectorizer.pkl')
@@ -43,22 +40,17 @@ class SentimentPredictor:
                 self.models[domain] = (model, vectorizer)
 
     def reload_models(self):
-        """Tải lại tất cả mô hình (dùng sau khi train lại)."""
         self.models = {}
         self._load_models()
 
     def predict(self, text, domain='auto'):
-        # ham du doan chinh
-        # check Không rõ
         is_unclear, reason = self.preprocessor.is_unclear(text)
         if is_unclear:
             return self._result(self.UNCLEAR, reason, 'none')
 
-        # tu nhan dien mien
         if domain == 'auto':
             domain = self.preprocessor.detect_domain(text)
 
-        # fallback ve general
         if domain not in self.models:
             domain = 'general'
         if domain not in self.models:
@@ -68,7 +60,6 @@ class SentimentPredictor:
 
         model, vectorizer = self.models[domain]
 
-        # check cac tu doi lap nhu: nhung, tuy nhien...
         contrast_result = self._check_contrast(text, model, vectorizer)
         if contrast_result:
             result_type, explanation = contrast_result
@@ -79,19 +70,15 @@ class SentimentPredictor:
             elif result_type == "positive":
                 return self._result(self.POSITIVE, explanation, domain)
 
-        # predict bang ml
         cleaned = self.preprocessor.clean_text(text)
         vec = vectorizer.transform([cleaned])
         prediction = model.predict(vec)[0]
         confidence = abs(model.decision_function(vec)[0])
 
-        # check trung lap
-        # do tin cay thap -> trung lap
         if confidence < config.NEUTRAL_THRESHOLD:
             explanation = self._build_explanation(text, cleaned, vectorizer, model, "trung lập")
             return self._result(self.NEUTRAL, explanation, domain)
 
-        # 6b: Nếu confidence vừa phải VÀ không chứa từ cảm xúc mạnh → trung lập
         if confidence < 0.8:
             sentiment_keywords = {
                 'tốt', 'tot', 'đẹp', 'dep', 'ngon', 'hay', 'thích', 'thich',
@@ -115,7 +102,6 @@ class SentimentPredictor:
                 explanation = "Bình luận không chứa từ ngữ cảm xúc rõ ràng, được đánh giá là trung lập."
                 return self._result(self.NEUTRAL, explanation, domain)
 
-        # ket luan tich cuc hay tieu cuc
         if prediction == 1:
             label = self.POSITIVE
             sentiment_word = "tích cực"
@@ -123,10 +109,8 @@ class SentimentPredictor:
             label = self.NEGATIVE
             sentiment_word = "tiêu cực"
 
-        # check sarcasm
         is_sarcasm, sarcasm_explanation = self.preprocessor.detect_sarcasm(text)
         if is_sarcasm:
-            # Đảo ngược kết quả
             if label == self.POSITIVE:
                 label = self.NEGATIVE
                 sentiment_word = "tiêu cực"
@@ -141,8 +125,6 @@ class SentimentPredictor:
         return self._result(label, explanation, domain)
 
     def _check_contrast(self, text, model, vectorizer):
-        # kiem tra cau co tu noi doi lap va phan tich tung ve
-        # Các từ nối đối lập (có dấu + không dấu)
         splitters = (
             r'\bnhưng\b|\bnhung\b|\bnhưng mà\b|\bnhung ma\b'
             r'|\btuy nhiên\b|\btuy nhien\b|\bthế nhưng\b|\bthe nhung\b'
@@ -159,7 +141,6 @@ class SentimentPredictor:
         if len(parts) < 2:
             return None
 
-        # Từ khóa tích cực / tiêu cực
         pos_keywords = {'tốt', 'tot', 'đẹp', 'dep', 'nhanh', 'giỏi', 'gioi', 'hay',
                         'ngon', 'thích', 'thich', 'yêu', 'yeu', 'tuyệt', 'tuyet',
                         'xinh', 'bền', 'ben', 'mượt', 'muot', 'chất', 'chat',
@@ -185,7 +166,6 @@ class SentimentPredictor:
             has_pos_kw = any(kw in part_lower for kw in pos_keywords)
             has_neg_kw = any(kw in part_lower for kw in neg_keywords)
 
-            # Phân loại dứt khoát
             if has_pos_kw and not has_neg_kw:
                 pos_parts.append(part.strip())
             elif has_neg_kw and not has_pos_kw:
@@ -201,7 +181,6 @@ class SentimentPredictor:
                 elif score < -config.MIXED_PART_THRESHOLD:
                     neg_parts.append(part.strip())
 
-        # Phân tích kết quả
         if pos_parts and neg_parts:
             explanation = "Bình luận chứa cả cảm xúc tích cực và tiêu cực."
             explanation += f"\n- Phần tích cực: \"{'; '.join(pos_parts)}\""
@@ -219,22 +198,48 @@ class SentimentPredictor:
         return None
 
     def _build_explanation(self, original_text, cleaned_text, vectorizer, model, sentiment_word):
-        """Xây dựng đoạn giải thích chi tiết cho kết quả dự đoán."""
         try:
             feature_names = vectorizer.get_feature_names_out()
-            coef = model.coef_.toarray().flatten()
+            coef = np.asarray(model.coef_).ravel()
             vec = vectorizer.transform([cleaned_text])
             vec_array = vec.toarray().flatten()
 
-            # Tính mức đóng góp của từng từ/cụm từ
             contributions = vec_array * coef
 
-            # Lấy top từ tích cực và tiêu cực
-            top_pos_idx = contributions.argsort()[-3:][::-1]
-            top_neg_idx = contributions.argsort()[:3]
+            word_indices = [idx for idx, name in enumerate(feature_names) if name.startswith('word__')]
+            pos_contribs = [(idx, contributions[idx]) for idx in word_indices if contributions[idx] > 0]
+            neg_contribs = [(idx, contributions[idx]) for idx in word_indices if contributions[idx] < 0]
 
-            pos_words = [(feature_names[i], contributions[i]) for i in top_pos_idx if contributions[i] > 0]
-            neg_words = [(feature_names[i], abs(contributions[i])) for i in top_neg_idx if contributions[i] < 0]
+            pos_contribs.sort(key=lambda x: x[1], reverse=True)
+            neg_contribs.sort(key=lambda x: x[1])
+
+            top_pos_idx = [idx for idx, _ in pos_contribs[:3]]
+            top_neg_idx = [idx for idx, _ in neg_contribs[:3]]
+
+            def clean_feature_name(name):
+                if name.startswith('word__'):
+                    name = name[6:]
+                elif name.startswith('char__'):
+                    name = name[6:]
+                return name.replace('_', ' ').strip()
+
+            pos_seen = set()
+            pos_words = []
+            for i in top_pos_idx:
+                if contributions[i] > 0:
+                    cleaned_name = clean_feature_name(feature_names[i])
+                    if cleaned_name and cleaned_name not in pos_seen:
+                        pos_words.append((cleaned_name, contributions[i]))
+                        pos_seen.add(cleaned_name)
+
+            neg_seen = set()
+            neg_words = []
+            for i in top_neg_idx:
+                if contributions[i] < 0:
+                    cleaned_name = clean_feature_name(feature_names[i])
+                    if cleaned_name and cleaned_name not in neg_seen:
+                        neg_words.append((cleaned_name, abs(contributions[i])))
+                        neg_seen.add(cleaned_name)
 
             explanation = f"Bình luận được đánh giá là {sentiment_word}."
 
@@ -255,7 +260,6 @@ class SentimentPredictor:
             return f"Bình luận được đánh giá là {sentiment_word} dựa trên phân tích tổng thể nội dung."
 
     def _result(self, label, explanation, domain):
-        """Trả về kết quả dạng dict chuẩn."""
         return {
             'label': label,
             'icon': self.LABEL_ICONS.get(label, ''),

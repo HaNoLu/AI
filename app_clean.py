@@ -22,18 +22,15 @@ app.secret_key = config.SECRET_KEY
 
 predictor = None
 
-
 def get_predictor():
     global predictor
     if predictor is None:
         predictor = SentimentPredictor()
     return predictor
 
-
 @app.route('/')
 def index():
     return render_template('index.html', domains=config.DOMAINS)
-
 
 @app.route('/api/predict', methods=['POST'])
 def api_predict():
@@ -75,19 +72,16 @@ def api_predict():
     except Exception as e:
         return jsonify({'error': f'Lỗi xử lý: {str(e)}'}), 500
 
-
 @app.route('/api/history', methods=['GET'])
 def api_history():
     history = session.get('history', [])
     return jsonify({'history': history})
-
 
 @app.route('/api/history/clear', methods=['POST'])
 def api_clear_history():
     session['history'] = []
     session.modified = True
     return jsonify({'success': True})
-
 
 @app.route('/api/import_predict', methods=['POST'])
 def api_import_predict():
@@ -160,7 +154,6 @@ def api_import_predict():
     except Exception as e:
         return jsonify({'error': f'Lỗi xử lý file: {str(e)}'}), 500
 
-
 if __name__ == '__main__':
     print("=" * 50)
     print("  HỆ THỐNG PHÂN TÍCH CẢM XÚC BÌNH LUẬN")
@@ -173,10 +166,10 @@ if __name__ == '__main__':
         csv_path = os.path.join(config.DATA_DIR, 'data.csv')
         if os.path.exists(csv_path):
             train_model(csv_path, domain='general')
-        else:
-            print(f"❌ Không tìm thấy file dữ liệu: {csv_path}")
-            sys.exit(1)
 
     print("\n🚀 Khởi động server...")
-    print("📍 Truy cập: http://127.0.0.1:5000\n")
-    app.run(debug=config.DEBUG, host='0.0.0.0', port=5000)
+    print("📍 Truy cập: http://127.0.0.1:5000")
+    print("\nNhấn Ctrl+C để dừng server\n")
+    
+    app.run(debug=True, host='0.0.0.0', port=5000)
+

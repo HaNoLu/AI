@@ -23,3 +23,4 @@ MIXED_PART_THRESHOLD = 0.1
 
 SECRET_KEY = 'sentiment-analysis-2026'
 DEBUG = True
+
