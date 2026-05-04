@@ -34,7 +34,7 @@ def get_predictor():
 def index():
     return render_template('index.html', domains=config.DOMAINS)
 
-
+#Rou
 @app.route('/api/predict', methods=['POST'])
 def api_predict():
     data = request.get_json()
